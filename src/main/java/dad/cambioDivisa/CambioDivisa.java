@@ -2,7 +2,9 @@ package dad.cambioDivisa;
 
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,8 +22,12 @@ public class CambioDivisa extends Application{
 
 	private TextField primerTextField,segundoTextField;
 	
-	private DoubleProperty operando1 = new SimpleDoubleProperty(0);
-	private DoubleProperty resultado = new SimpleDoubleProperty(0);
+	private Double cantidad ;
+	
+	private ComboBox<Divisa> comboBoxDivisa1;
+	private ComboBox<Divisa> comboBoxDivisa2;
+	
+	private DoubleProperty resultadoFinal= new SimpleDoubleProperty();
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -32,27 +38,33 @@ public class CambioDivisa extends Application{
 		segundoTextField.setMaxWidth(50);
 		segundoTextField.setEditable(false);
 		Button cambiar= new Button("Cambiar");
-		cambiar.setOnAction(e -> cambio(e)); 
 		
-		ObservableList<String> divisas= FXCollections.observableArrayList();
+		comboBoxDivisa1= new ComboBox<>();
+		comboBoxDivisa1.getItems().addAll(
+				new Divisa("Euro", 1.0),
+				new Divisa("Libra", 0.8873),
+				new Divisa("Dolar", 1.2007),
+				new Divisa("Yen", 133.59)
+				);
 		
-		divisas.addAll("Euro","Libra","Yen","Dolar");
+		comboBoxDivisa2= new ComboBox<>();
+		comboBoxDivisa2.getItems().addAll(
+				new Divisa("Euro", 1.0),
+				new Divisa("Libra", 0.8873),
+				new Divisa("Dolar", 1.2007),
+				new Divisa("Yen", 133.59)
+				);
 		
-		ComboBox<String> combo = new ComboBox<>(divisas);
-	
-		
-		
-		ComboBox<String> combo2 = new ComboBox<>(divisas);
-		
-		
-		HBox fila1= new HBox(primerTextField,combo);
+		HBox fila1= new HBox(primerTextField,comboBoxDivisa1);
 		fila1.setAlignment(Pos.CENTER);
-		
-		HBox fila2= new HBox (segundoTextField,combo2);
+		fila1.setSpacing(5);
+		HBox fila2= new HBox (segundoTextField,comboBoxDivisa2);
 		fila2.setAlignment(Pos.CENTER);
+		fila2.setSpacing(5);
 		
 		VBox root= new VBox (fila1,fila2,cambiar);
 		root.setAlignment(Pos.CENTER);
+		root.setSpacing(5);
 		
 	    Scene scene = new Scene(root,640,480);
 
@@ -60,16 +72,38 @@ public class CambioDivisa extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
    
+      
         
-        primerTextField.textProperty().bindBidirectional(operando1, new NumberStringConverter());
-        
+     
+       
+       
+         
+      comboBoxDivisa1.getSelectionModel().getSelectedItem();
+      comboBoxDivisa2.getSelectionModel().getSelectedItem();
+      
+      cambiar.setOnAction(e -> cambio(comboBoxDivisa1.getSelectionModel().getSelectedItem(), comboBoxDivisa2.getSelectionModel().getSelectedItem(),Double.parseDouble( primerTextField.getText()))); 
 	}
 
-	private Object cambio(ActionEvent e) {
+	public void cambio(Divisa primeraDivisa,Divisa segundaDivisa,double cantidad) {
 		
 		
-		return null;
-	}
+		
+	    
+		
+		
+			 
+			 String resultadoD= Divisa.fromTo(primeraDivisa,segundaDivisa,cantidad).toString();
+			     segundoTextField.setText(resultadoD);
+		
+			
+	    
+		   
+			
+		}
+	    
+	     
+	     
+	
 
 	public static void main(String[] args) {
 		launch(args);
